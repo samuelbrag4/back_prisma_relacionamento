@@ -1,146 +1,102 @@
-import PersonagemModel from "../models/collectionModel.js";
+import CollectionModel from "../models/collectionModel.js";
 
-class PersonagemController {
-  // GET /api/personagens
-  async getAllPersonagens(req, res) {
+class CollectionController {
+  // GET /api/collections
+  async getAllCollections(req, res) {
     try {
-      const personagens = await PersonagemModel.findAll();
-      res.json(personagens);
+      const collections = await CollectionModel.findAll();
+      res.json(collections);
     } catch (error) {
-      console.error("Erro ao buscar personagens:", error);
-      res.status(500).json({ error: "Erro ao buscar personagens" });
+      console.error("Erro ao buscar collections:", error);
+      res.status(500).json({ error: "Erro ao buscar collections" });
     }
   }
 
-  // GET /api/personagens/:id
-  async getPersonagemById(req, res) {
+  // GET /api/collections/:id
+  async getCollectionById(req, res) {
     try {
       const { id } = req.params;
 
-      const personagem = await PersonagemModel.findById(id);
+      const collection = await CollectionModel.findById(id);
 
-      if (!personagem) {
-        return res.status(404).json({ error: "Personagem não encontrado" });
+      if (!collection) {
+        return res.status(404).json({ error: `Collection com ID ${id} não encontrado` });
       }
 
-      res.json(personagem);
+      res.json(collection);
     } catch (error) {
-      console.error("Erro ao buscar personagem:", error);
-      res.status(500).json({ error: "Erro ao buscar personagem" });
+      console.error(`Erro ao buscar collection com ID ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erro ao buscar collection" });
     }
   }
 
-  // POST /api/personagens
-  async createPersonagem(req, res) {
+  // POST /api/collections
+  async createCollection(req, res) {
     try {
-      // Validação básica
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
+      const { name, description, releaseYear } = req.body;
 
-      // Verifica se todos os campos do personagem foram fornecidos
-      if (
-        !title ||
-        !description ||
-        !episodes ||
-        !releaseYear ||
-        !studio ||
-        !genres ||
-        !rating ||
-        !imageUrl
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
+      // Validação de entrada
+      if (!name || !description || !releaseYear) {
+        return res.status(400).json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar o novo personagem
-      const newPersonagem = await PersonagemModel.create(
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
-
-      if (!newPersonagem) {
-        return res.status(400).json({ error: "Erro ao criar personagem" });
+      if (typeof releaseYear !== "number") {
+        return res.status(400).json({ error: "O campo releaseYear deve ser um número" });
       }
 
-      res.status(201).json(newPersonagem);
+      // Criar o novo collection
+      const newCollection = await CollectionModel.create(name, description, releaseYear);
+
+      res.status(201).json(newCollection);
     } catch (error) {
-      console.error("Erro ao criar personagem:", error);
-      res.status(500).json({ error: "Erro ao criar personagem" });
+      console.error("Erro ao criar collection:", error);
+      res.status(500).json({ error: "Erro ao criar collection" });
     }
   }
 
-  // PUT /api/personagens/:id
-  async updatePersonagem(req, res) {
+  // PUT /api/collections/:id
+  async updateCollection(req, res) {
     try {
       const { id } = req.params;
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
+      const { name, description, releaseYear } = req.body;
 
-      // Atualizar o personagem
-      const updatedPersonagem = await PersonagemModel.update(
-        id,
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
-
-      if (!updatedPersonagem) {
-        return res.status(404).json({ error: "Personagem não encontrado" });
+      // Validação de entrada
+      if (releaseYear !== undefined && typeof releaseYear !== "number") {
+        return res.status(400).json({ error: "O campo releaseYear deve ser um número" });
       }
 
-      res.json(updatedPersonagem);
+      // Atualizar o collection
+      const updatedCollection = await CollectionModel.update(id, name, description, releaseYear);
+
+      if (!updatedCollection) {
+        return res.status(404).json({ error: `Collection com ID ${id} não encontrado` });
+      }
+
+      res.json(updatedCollection);
     } catch (error) {
-      console.error("Erro ao atualizar personagem:", error);
-      res.status(500).json({ error: "Erro ao atualizar personagem" });
+      console.error(`Erro ao atualizar collection com ID ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erro ao atualizar collection" });
     }
   }
 
-  // DELETE /api/personagens/:id
-  async deletePersonagem(req, res) {
+  // DELETE /api/collections/:id
+  async deleteCollection(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover o personagem
-      const result = await PersonagemModel.delete(id);
+      // Remover o collection
+      const result = await CollectionModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Personagem não encontrado" });
+        return res.status(404).json({ error: `Collection com ID ${id} não encontrado` });
       }
 
       res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover personagem:", error);
-      res.status(500).json({ error: "Erro ao remover personagem" });
+      console.error(`Erro ao remover collection com ID ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erro ao remover collection" });
     }
   }
 }
 
-export default new PersonagemController();
+export default new CollectionController();
