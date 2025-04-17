@@ -20,7 +20,7 @@ app.use("/collections", collectionRouter); // Rotas de coleções
 
 // Rota base para verificar se o servidor está rodando
 app.get("/", (req, res) => {
-  res.json({ message: "API de Coleção de Animes funcionando!" });
+  res.json({ message: "API de Coleção de Cards funcionando!" });
 });
 
 // Iniciar o servidor
