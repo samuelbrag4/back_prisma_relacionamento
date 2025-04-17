@@ -1,152 +1,91 @@
 import prisma from "../../prisma/prisma.js";
 
-// Array para armazenar os animes em memória
-/* let animes = [
-  {
-    id: 1,
-    title: "Attack on Titan",
-    description: "Humanidade lutando contra titãs em um mundo pós-apocalíptico",
-    episodes: 75,
-    releaseYear: 2013,
-    studio: "MAPPA",
-    genres: "Ação,Drama,Fantasia",
-    rating: 4.8,
-    imageUrl: "https://example.com/aot.jpg",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 2,
-    title: "My Hero Academia",
-    description:
-      "Em um mundo onde quase todos possuem superpoderes, um garoto sem poderes luta para se tornar um herói",
-    episodes: 113,
-    releaseYear: 2016,
-    studio: "Bones",
-    genres: "Ação,Comédia,Super-heróis",
-    rating: 4.6,
-    imageUrl: "https://example.com/mha.jpg",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-]; */
-
-class AnimeModel {
-  // Obter todos os animes
+class CardModel {
+  // Obter todos os cards
   async findAll() {
-    const animes = await prisma.anime.findMany({
+    const cards = await prisma.card.findMany({
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    //console.log(animes);
+    console.log(cards);
 
-    return animes;
+    return cards;
   }
 
-  // Obter um anime pelo ID
+  // Obter um card pelo ID
   async findById(id) {
-    const anime = await prisma.anime.findUnique({
+    const card = await prisma.card.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    return anime;
+    return card;
   }
 
-  // Criar um novo anime
-  async create(
-    title,
-    description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
-    imageUrl
-  ) {
-    const newAnime = await prisma.anime.create({
+  // Criar um novo card
+  async create(name, rarity, damage, defense, imageUrl, collectionId) {
+    const newCard = await prisma.card.create({
       data: {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
+        name,
+        rarity,
+        damage,
+        defense,
         imageUrl,
+        collectionId: Number(collectionId), // Relaciona o card com uma coleção
       },
     });
 
-    return newAnime;
+    return newCard;
   }
 
-  // Atualizar um anime
-  async update(
-    id,
-    title,
-    description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
-    imageUrl
-  ) {
-    const anime = await this.findById(id);
+  // Atualizar um card
+  async update(id, name, rarity, damage, defense, imageUrl) {
+    const card = await this.findById(id);
 
-    if (!anime) {
+    if (!card) {
       return null;
     }
 
-    // Atualize o anime existente com os novos dados
+    // Atualize o card existente com os novos dados
     const data = {};
-    if (title !== undefined) {
-      data.title = title;
+    if (name !== undefined) {
+      data.name = name;
     }
-    if (description !== undefined) {
-      data.description = description;
+    if (rarity !== undefined) {
+      data.rarity = rarity;
     }
-    if (episodes !== undefined) {
-      data.episodes = episodes;
+    if (damage !== undefined) {
+      data.damage = damage;
     }
-    if (releaseYear !== undefined) {
-      data.releaseYear = releaseYear;
-    }
-    if (studio !== undefined) {
-      data.studio = studio;
-    }
-    if (genres !== undefined) {
-      data.genres = genres;
-    }
-    if (rating !== undefined) {
-      data.rating = rating;
+    if (defense !== undefined) {
+      data.defense = defense;
     }
     if (imageUrl !== undefined) {
       data.imageUrl = imageUrl;
     }
 
-    const animeUpdated = await prisma.anime.update({
+    const cardUpdated = await prisma.card.update({
       where: {
         id: Number(id),
       },
       data,
     });
 
-    return animeUpdated;
+    return cardUpdated;
   }
 
-  // Remover um anime
+  // Remover um card
   async delete(id) {
-    const anime = await this.findById(id);
+    const card = await this.findById(id);
 
-    if (!anime) {
+    if (!card) {
       return null;
     }
 
-    await prisma.anime.delete({
+    await prisma.card.delete({
       where: {
         id: Number(id),
       },
@@ -156,4 +95,4 @@ class AnimeModel {
   }
 }
 
-export default new AnimeModel();
+export default new CardModel();
