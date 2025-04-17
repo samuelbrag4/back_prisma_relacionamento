@@ -1,22 +1,22 @@
 import express from "express";
-import AnimeController from "../controllers/cardController.js";
+import CardController from "../controllers/cardController.js";
 
-const animesRouter = express.Router();
+const cardsRouter = express.Router();
 
-// Rotas de Animes
-// GET /api/animes - Listar todos os animes
-animesRouter.get("/", AnimeController.getAllAnimes);
+// Rotas de Cards
+// GET /api/cards - Listar todos os cards
+cardsRouter.get("/", CardController.getAllCards);
 
-// GET /api/animes/:id - Obter um anime pelo ID
-animesRouter.get("/:id", AnimeController.getAnimeById);
+// GET /api/cards/:id - Obter um Card pelo ID
+cardsRouter.get("/:id", CardController.getCardById);
 
-// POST /api/animes - Criar um novo anime
-animesRouter.post("/", AnimeController.createAnime);
+// POST /api/cards - Criar um novo Card
+cardsRouter.post("/", CardController.createCard);
 
-// PUT /api/animes/:id - Atualizar um anime
-animesRouter.put("/:id", AnimeController.updateAnime);
+// PUT /api/cards/:id - Atualizar um Card
+cardsRouter.put("/:id", CardController.updateCard);
 
-// DELETE /api/animes/:id - Remover um anime
-animesRouter.delete("/:id", AnimeController.deleteAnime);
+// DELETE /api/cards/:id - Remover um Card
+cardsRouter.delete("/:id", CardController.deleteCard);
 
-export default animesRouter;
+export default cardsRouter;
