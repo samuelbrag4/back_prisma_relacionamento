@@ -1,147 +1,141 @@
-import AnimeModel from "../models/cardModel.js";
+import CardModel from "../models/cardModel.js";
 
-class AnimeController {
-  // GET /api/animes
-  async getAllAnimes(req, res) {
+class CardController {
+  // GET /api/cards
+  async getAllCards(req, res) {
     try {
-      const animes = await AnimeModel.findAll();
-      res.json(animes);
+      const cards = await CardModel.findAll();
+      res.json(cards);
     } catch (error) {
-      console.error("Erro ao buscar animes:", error);
-      res.status(500).json({ error: "Erro ao buscar animes" });
+      console.error("Erro ao buscar cards:", error);
+      res.status(500).json({ error: "Erro ao buscar cards" });
     }
   }
 
-  // GET /api/animes/:id
-  async getAnimeById(req, res) {
+  // GET /api/cards/:id
+  async getCardById(req, res) {
     try {
       const { id } = req.params;
 
-      const anime = await AnimeModel.findById(id);
+      const card = await CardModel.findById(id);
 
-      if (!anime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+      if (!card) {
+        return res
+          .status(404)
+          .json({ error: `Card com ID ${id} não encontrado` });
       }
 
-      res.json(anime);
+      res.json(card);
     } catch (error) {
-      console.error("Erro ao buscar anime:", error);
-      res.status(500).json({ error: "Erro ao buscar anime" });
+      console.error(`Erro ao buscar card com ID ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erro ao buscar card" });
     }
   }
 
-  // POST /api/animes
-  async createAnime(req, res) {
+  // POST /api/cards
+  async createCard(req, res) {
     try {
-      // Validação básica
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
+      const { name, rarity, damage, defense, imageUrl, collectionId } =
+        req.body;
 
-      // Verifica se o título do anime foi fornecido
-
+      // Validação de entrada
       if (
-        !title ||
-        !description ||
-        !episodes ||
-        !releaseYear ||
-        !studio ||
-        !genres ||
-        !rating ||
-        !imageUrl
+        !name ||
+        !rarity ||
+        damage === undefined ||
+        defense === undefined ||
+        !collectionId
       ) {
         return res
           .status(400)
           .json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar o novo anime
-      const newAnime = await AnimeModel.create(
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
-
-      if (!newAnime) {
-        return res.status(400).json({ error: "Erro ao criar anime" });
+      if (typeof damage !== "number" || typeof defense !== "number") {
+        return res
+          .status(400)
+          .json({ error: "Os campos damage e defense devem ser números" });
       }
 
-      res.status(201).json(newAnime);
-    } catch (error) {
-      console.error("Erro ao criar anime:", error);
-      res.status(500).json({ error: "Erro ao criar anime" });
-    }
-  }
-
-  // PUT /api/animes/:id
-  async updateAnime(req, res) {
-    try {
-      const { id } = req.params;
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
+      // Criar o novo card
+      const newCard = await CardModel.create(
+        name,
+        rarity,
+        damage,
+        defense,
         imageUrl,
-      } = req.body;
-
-      // Atualizar o anime
-      const updatedAnime = await AnimeModel.update(
-        id,
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
+        collectionId
       );
 
-      if (!updatedAnime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
-      }
-
-      res.json(updatedAnime);
+      res.status(201).json(newCard);
     } catch (error) {
-      console.error("Erro ao atualizar anime:", error);
-      res.status(500).json({ error: "Erro ao atualizar anime" });
+      console.error("Erro ao criar card:", error);
+      res.status(500).json({ error: "Erro ao criar card" });
     }
   }
 
-  // DELETE /api/animes/:id
-  async deleteAnime(req, res) {
+  // PUT /api/cards/:id
+  async updateCard(req, res) {
+    try {
+      const { id } = req.params;
+      const { name, rarity, damage, defense, imageUrl } = req.body;
+
+      // Validação de entrada
+      if (damage !== undefined && typeof damage !== "number") {
+        return res
+          .status(400)
+          .json({ error: "O campo damage deve ser um número" });
+      }
+
+      if (defense !== undefined && typeof defense !== "number") {
+        return res
+          .status(400)
+          .json({ error: "O campo defense deve ser um número" });
+      }
+
+      // Atualizar o card
+      const updateCard = await CardModel.update(
+        id,
+        name,
+        rarity,
+        damage,
+        defense,
+        imageUrl
+      );
+
+      if (!updateCard) {
+        return res
+          .status(404)
+          .json({ error: `Card com ID ${id} não encontrado` });
+      }
+
+      res.json(updateCard);
+    } catch (error) {
+      console.error(`Erro ao atualizar card com ID ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erro ao atualizar card" });
+    }
+  }
+
+  // DELETE /api/cards/:id
+  async deleteCard(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover o anime
-      const result = await AnimeModel.delete(id);
+      // Remover o card
+      const result = await CardModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+        return res
+          .status(404)
+          .json({ error: `Card com ID ${id} não encontrado` });
       }
 
       res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover anime:", error);
-      res.status(500).json({ error: "Erro ao remover anime" });
+      console.error(`Erro ao remover card com ID ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erro ao remover card" });
     }
   }
 }
 
-export default new AnimeController();
+export default new CardController();
