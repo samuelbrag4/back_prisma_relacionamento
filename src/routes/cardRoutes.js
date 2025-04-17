@@ -1,5 +1,5 @@
 import express from "express";
-import AnimeController from "../controllers/animeController.js";
+import AnimeController from "../controllers/cardController.js";
 
 const animesRouter = express.Router();
 

@@ -1,4 +1,4 @@
-import AnimeModel from "../models/animeModel.js";
+import AnimeModel from "../models/cardModel.js";
 
 class AnimeController {
   // GET /api/animes

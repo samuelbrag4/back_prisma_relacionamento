@@ -43,3 +43,15 @@ model Personagem {
 
   @@map("personagens")
 }
+
+model Collection {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String?
+  releaseYear Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("collections")
+}

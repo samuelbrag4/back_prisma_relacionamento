@@ -1,4 +1,4 @@
-import PersonagemModel from "../models/personagemModel.js";
+import PersonagemModel from "../models/collectionModel.js";
 
 class PersonagemController {
   // GET /api/personagens
