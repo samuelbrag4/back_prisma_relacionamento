@@ -1,6 +1,8 @@
 import express from "express";
 import CollectionController from "../controllers/collectionController.js";
 
+import authMiddleware from "../moddleware/authMiddleware.js";
+
 const collectionRouter = express.Router();
 
 // Rotas de Coleções
@@ -10,8 +12,8 @@ collectionRouter.get("/", CollectionController.getAllCollections);
 // GET /colecoes/:id - Obter uma Coleção pelo ID
 collectionRouter.get("/:id", CollectionController.getCollectionById);
 
-// POST /colecoes - Criar uma nova Coleção
-collectionRouter.post("/", CollectionController.createCollection);
+// POST /colecoes - Criar uma nova Coleção - autenticada
+collectionRouter.post("/", authMiddleware, CollectionController.createCollection);
 
 // PUT /colecoes/:id - Atualizar uma Coleção
 collectionRouter.put("/:id", CollectionController.updateCollection);
